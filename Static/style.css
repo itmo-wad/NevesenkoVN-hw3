@@ -13,3 +13,12 @@
 	margin-bottom: 10px;
 	align-self: center;
 }
+
+.blogs
+{
+	width: 500px;
+	height: auto;
+	margin-top: 0px;
+	margin-bottom: 10px;
+	border-style: dotted;
+}

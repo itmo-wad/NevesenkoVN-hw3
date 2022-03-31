@@ -14,8 +14,13 @@ favicon = os.path.join(app.config['UPLOAD_FOLDER'], 'favicon.ico')
 style = os.path.join(app.config['UPLOAD_FOLDER'], '../style.css')
 
 client = pymongo.MongoClient("mongodb+srv://N0L1F3R:Qwe12345@cluster0.9ye0c.mongodb.net/test")
+
 db = client.get_database('homework2')
+dbHW3 = client.get_database('homework3')
+
 records = db.users
+recordsPosts = dbHW3.posts
+recordsSecretsPosts = dbHW3.secretPosts
 
 @app.route("/", methods=['post', 'get'])
 def index():
@@ -32,11 +37,11 @@ def index():
             
       if check_password_hash(passwordcheck, password) is True:
         session["userName"] = user_val
-        return redirect("/profile")
+        return render_template("profile.html", fav = favicon, styleCss = style)
       else:
         if "userName" in session:
-          return redirect("/profile")
-        message = 'Wrong password ' + password + ' ' + hashedPassword
+          return render_template("profile.html", fav = favicon, styleCss = style)
+        message = 'Wrong password '
         return render_template('index.html', message=message, fav = favicon, styleCss = style)
     else:
       message = 'user not found'
@@ -66,40 +71,20 @@ def redirectToProfile():
       user_input = {'userName': user, 'password': hashedPassword}
       records.insert_one(user_input)
       return redirect("/")
-  return render_template("register.html", fav = favicon, styleCss = style)
+  return render_template("register.html", message = message, fav = favicon, styleCss = style)
 
-@app.route("/profile")
+@app.route("/profile", methods=['post', 'get'])
 def profilePage():
+  message = ''
   if session.get('userName') is None:
-    return redirect("/")
+    message = 'Log in to proceed'
+    return render_template("index.html", message = message, fav = favicon, styleCss = style)
   return render_template("profile.html", fav = favicon, styleCss = style)
 
 @app.route("/settings", methods=['post', 'get'])
 def updateProfile():
   if session.get('userName') is None:
     return redirect("/")
-
-#   if request.method == "POST":
-#     newUserName = request.form.get("newUserName")
-#     password = request.form.get("password")
-#     newPassword = request.form.get("newPassword")
-#     oldName = session.get('userName')
-
-#     user_found = records.find_one({"userName": oldName})
-#     if user_found:
-#       user_val = user_found['userName']
-#       passwordcheck = user_found['password']
-            
-#       if newUserName is None:
-#       if newPassword:
-#         hashedPassword = generate_password_hash(newPassword)
-#         user_input = {'userName': oldName, 'password': hashedPassword}
-#         records.
-#         message = 'Wrong password '
-#         return render_template('index.html', message=message, fav = favicon, styleCss = style)
-#     else:
-#       message = 'user not found'
-#       return render_template('index.html', message=message, fav = favicon, styleCss = style)
   return render_template("settings.html", fav = favicon, styleCss = style)
 
 @app.route('/logout')
@@ -110,6 +95,43 @@ def logout():
     del session['userName']
     flash('You have successfully logged yourself out.')
   return redirect('/')
+
+@app.route('/story')
+def story():
+  message = ''
+  content = dbHW3.posts.find()
+  secretContent = dbHW3.secretPosts.find()
+
+  if session.get('userName') is None:
+    message = 'null'
+
+  return render_template("story.html", secretContent = secretContent, content = content, 
+    fav = favicon, message = message, styleCss = style)
+
+@app.route('/newStory', methods=['post', 'get'])
+def newStory():
+  message = ''
+  if session.get('userName') is None:
+    message = 'Register to write a post'
+    return render_template("index.html", message = message, fav = favicon, styleCss = style)
+
+  if request.method == "POST":
+    author = session.get('userName')
+    title = request.form.get("title")
+    text = request.form.get("text")
+    visibility = request.form.get("visibility")
+    blog_post = {'author': author, 'title': title, 'text': text, 'visibility': visibility}
+
+    if visibility == 'private':
+      recordsSecretsPosts.insert_one(blog_post)
+    else:
+      recordsPosts.insert_one(blog_post)
+    
+    message = 'The post was successfully created!'
+
+    return render_template("newStory.html", message = message, fav = favicon, styleCss = style)
+
+  return render_template("newStory.html", message = message, fav = favicon, styleCss = style)
 
 
 if __name__ == "__main__":

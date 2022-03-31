@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Face/b/ook (HW 3)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="icon" href="{{fav}}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{styleCss}}">
+</head>
+<body>
+<div class="main">
+	<nav>
+		<a href="profile"> My page </a> | <a href="/"> Mainpage </a> | <a href="/newStory"> Add a post </a>
+	</nav>
+	<header>
+		<h2> Blogs </h2>
+	</header>
+	{% if message  %}
+	    <div class="alert alert-secondary" role="alert">
+	        <p>{{ message }}</p>
+	    </div>
+	{% endif %}
+	{%if secretContent%}
+		{% for secretDoc in secretContent  if not message == 'null' %}
+		    <div class="blogs">
+		        <h2>{{ secretDoc['title'] }}</h2>
+		        <h4>Author: {{secretDoc['author']}}</h4>
+		        <p>{{secretDoc['text']}}</p>
+	    	</div>
+	    	<br>
+		{%endfor%}
+	{% endif %}
+	{%if content%}
+		{% for doc in content%}
+		    <div class="blogs">
+		        <h2>{{ doc['title'] }}</h2>
+		        <h4>Author: {{doc['author']}}</h4>
+		        <p>{{doc['text']}}</p>
+	    	</div>
+	    	<br>
+		{%endfor%}
+	{% endif %}
+</div>
+</body>
+</html>

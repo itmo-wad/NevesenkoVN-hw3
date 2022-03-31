@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Face/b/ook (HW 3)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="icon" href="{{fav}}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{styleCss}}">
+</head>
+<body>
+<div class="main">
+	<nav>
+		<a href="profile"> My page </a> | <a href="/"> Mainpage </a> | <a href="/story"> Blogs </a>
+	</nav>
+	<header>
+		<h2> Create a blog </h2>
+	</header>
+	{% if message  %}
+	    <div class="alert alert-secondary" role="alert">
+	        <p>{{ message }}</p>
+	    </div>
+	{% endif %}
+	<form action="" method="post" class="flex-auth">
+	    <label class="flex-auth" for="labelTitle"><b>Blog title</b></label>
+	    <input class="flex-auth" name="title" type="text" placeholder="Create a title" required>
+
+	    <label class="flex-auth" for="labelText"><b>Main text</b></label>
+	    <input class="flex-auth" name="text" type="text" placeholder="Write something here :)" required>
+	    
+	    <div>
+	    	<input type="radio" name="visibility" value="private" required>
+	    	<label for="choicePrivate">Make this post private</label>
+	    	<br>
+	    	<input type="radio" name="visibility" value="public" required>
+	    	<label for="choicePublic">Make this post public</label>
+	    </div>
+	    
+	    <div>
+	    	<button class="buttonCls" type="submit">Create a post!</button>
+	    </div>
+	</form>
+	</div>
+</div>
+</body>
+</html>
